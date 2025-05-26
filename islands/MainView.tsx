@@ -14,6 +14,7 @@ export default function MainView({ isGrid, posts }: HomeProps) {
         <button
           type="button"
           className={`toggle-button ${isGrid.value ? "active" : ""}`}
+          onClick={() => (isGrid.value = !isGrid.value)}//Faltaba esto para cambiar la vista
           title={isGrid.value
             ? "Cambiar a vista de lista"
             : "Cambiar a vista de cuadrícula"}

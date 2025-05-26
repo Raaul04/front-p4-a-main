@@ -26,11 +26,19 @@ export default function LikeButton(
       setIsLoading(true);
       setError("");
 
-      await axios.delete(`${API_BASE_URL}/api/posts/${postId}/like`, {
-        headers: {
-          "Content-Type": "application/json",
+      //Hacemos la llamada a la API para dar like o quitar like
+      const response = await axios.post(
+        `${API_BASE_URL}api/posts/${postId}/like`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
+      if (response.status !== 200) {
+        throw new Error("Error al dar like al post");
+      }
 
       setLiked(!liked);
       setLikes((prev) => liked ? prev - 1 : prev + 1);

@@ -5,6 +5,7 @@ import type { ApiResponseSingleSuccess } from "../../models/api_response.ts";
 import type Post from "../../models/post.ts";
 import PostCover from "../../islands/PostCover.tsx";
 import LikeButton from "../../islands/LikeButton.tsx";
+import DeleteButton from "../../islands/DeleteButton.tsx";
 
 interface Comment {
   _id: string;
@@ -17,7 +18,7 @@ export const handler: Handlers = {
   async GET(_req, ctx) {
     try {
       const { data } = await axios.get<ApiResponseSingleSuccess<Post>>(
-        `${API_BASE_URL}/api/posts/${ctx.params.id}`,
+        `${API_BASE_URL}api/posts/${ctx.params.id}`,
       );
       return ctx.render({ post: data.data });
     } catch (_) {
@@ -35,8 +36,9 @@ export const handler: Handlers = {
     }
     
     try {
-      await axios.patch(
-        `${API_BASE_URL}/api/posts/${ctx.params.id}/comments`,
+      //cambiamos de patch a post para que coincida con el modelo y que funcione correctamente
+      await axios.post(
+        `${API_BASE_URL}api/posts/${ctx.params.id}/comments`,//sobre la url, no es necesario el /api  
         { author, content },
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -116,8 +118,8 @@ export default function PostDetail({ data }: PostProps) {
     <div className="post-detail">
       {/* Portada del post */}
       <PostCover
-        src={post.portada}
-        alt={`Imagen de portada para: ${post.titulo}`}
+        src={post.cover}
+        alt={`Imagen de portada para: ${post.title}`}
         width={1200}
         height={400}
       />
@@ -125,17 +127,17 @@ export default function PostDetail({ data }: PostProps) {
       <div className="post-container">
         {/* Cabecera del post */}
         <header className="post-header">
-          <h1 className="post-title">{post.titulo}</h1>
+          <h1 className="post-title">{post.title}</h1>
           <div className="post-meta">
-            <span className="post-author">Por {post.autor}</span>
-            <span className="post-date">{formatDate(post.created_at)}</span>
+            <span className="post-author">Por {post.author}</span>
+            <span className="post-date">{formatDate(post.createdAt)}</span>
           </div>
         </header>
 
         {/* Contenido del post */}
         <article className="post-content">
           <div className="post-text">
-            {post.contenido.split("\n").map((paragraph, index) => (
+            {post.content.split("\n").map((paragraph, index) => (
               <p key={index}>{paragraph}</p>
             ))}
           </div>
@@ -149,6 +151,8 @@ export default function PostDetail({ data }: PostProps) {
               initialLikes={post.likes}
               isLiked={false}
             />
+            {/* Botón para eliminar el post */}
+            <DeleteButton postId={post._id} />
           </div>
 
           {/* Sección de comentarios (puedes implementarla más adelante) */}

@@ -10,16 +10,17 @@ export const handler: Handlers = {
     try {
       const { url } = _req;
       const searchParams = new URL(url).searchParams;
-      const query = searchParams.get("query");
+      const query = searchParams.get("title");// Cambiado "search" a "title" para que coincida con el modelo
+
       if (!query || query.trim() === "") {
         return ctx.render({ posts: [], query });
       }
       const { data } = await axios.get<ApiResponseSuccess<Post[]>>(
-        `${API_BASE_URL}/api/posts?query=${query}`,
+        `${API_BASE_URL}api/posts?search=${query}`,// Cambiado "posts" a "search" para que coincida con el modelo
       );
-      return ctx.render({ posts: data.data.posts });
+      return ctx.render({ posts: data.data.posts});
     } catch (_) {
-      return ctx.render({ posts: [] });
+      return ctx.render({ posts: []   });
     }
   },
 };
@@ -35,7 +36,8 @@ export default function Search({ data }: SearchProps) {
   const { posts, query = "" } = data;
   const hasResults = posts.length > 0;
   const searchTerm = query || "";
-
+    
+  //Cambiamos el name de "search" a "title" para que coincida con el modelo
   return (
     <div className="search-container">
       <div className="search-header">
@@ -44,7 +46,7 @@ export default function Search({ data }: SearchProps) {
           <div className="search-input-container">
             <input
               type="text"
-              name="search"
+              name="title"
               placeholder="Buscar por título o autor..."
               value={searchTerm}
               className="search-input"
